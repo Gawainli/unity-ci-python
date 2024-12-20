@@ -145,8 +145,16 @@ HEADER = r"""
 """
 
 
-def build_app():
-    """从命令行读取出包配置文件路径，启动unity命令行出包"""
+def build_app(file_path):
+    """读取配置文件，构建Unity应用
+
+    Args:
+        file_path (string): 配置文件路径
+    """    
+    _read_app_cfg_and_set_env(file_path)
+    _build_app_and_run_unity_command()
+
+def _main():
     print(HEADER)
     parser = argparse.ArgumentParser(description="Unity build tool")
     parser.add_argument('cfg_path', type=str, help='build config ini file')
@@ -154,10 +162,7 @@ def build_app():
     if not os.path.isfile(args.cfg_path):
         logger.info(f"Error: The file {args.cfg_path} does not exist.")
         return
-
-    _read_app_cfg_and_set_env(args.cfg_path)
-    _build_app_and_run_unity_command()
-
+    build_app(args.cfg_path)
 
 if __name__ == "__main__":
-    build_app()
+    _main()

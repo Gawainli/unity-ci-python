@@ -9,15 +9,12 @@ from logger import logger
 import build_app
 
 
-def _build_bundles():
-    print(build_app.HEADER)
-    parser = argparse.ArgumentParser(description="Unity build tool")
-    parser.add_argument('cfg_path', type=str, help='build config ini file')
-    args = parser.parse_args()
-    file_path = Path(args.cfg_path)
-    if not file_path.is_file():
-        logger.info(f"Error: The file {args.cfg_path} does not exist.")
-        return
+def build_bundles(file_path):
+    """读取bundles配置文件，构建bundles
+
+    Args:
+        file_path (string): bundles配置文件路径
+    """
     logger.info(f"Read bundles config:{file_path}")
     cfg = configparser.ConfigParser()
     cfg.read(file_path)
@@ -46,7 +43,7 @@ def _build_bundles_and_run_unity_command():
                          'BUILD_TARGET', 'BUILD_IN_FILE_COPY', 'BUILD_PKG_VER',
                          'FILE_NAME_STYLE', 'COMPRESSION', 'ENCRYPTION',
                          'BUILD_MODE', 'PACKAGE_NAME']
-    if build_app.check_environ(required_env_vars) is not True:
+    if not build_app.check_environ(required_env_vars):
         logger.error("check env failed.")
         sys.exit(1)
 
@@ -91,5 +88,17 @@ def _build_bundles_and_run_unity_command():
     build_app.run_unity_command(unity_cmd)
 
 
+def _main():
+    print(build_app.HEADER)
+    parser = argparse.ArgumentParser(description="Unity build tool")
+    parser.add_argument('cfg_path', type=str, help='build config ini file')
+    args = parser.parse_args()
+    file_path = Path(args.cfg_path)
+    if not file_path.is_file():
+        logger.error(f"Error: The file {args.cfg_path} does not exist.")
+        return
+    build_bundles(file_path)
+
+
 if __name__ == "__main__":
-    _build_bundles()
+    _main()
