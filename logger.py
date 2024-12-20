@@ -1,7 +1,9 @@
-import sys
-import loguru
+""" 日志模块
 
-# from pathlib import Path
+Returns:
+    loguru.logger: 返回一个logger实例
+"""
+import loguru
 
 def setup_logger():
     """创建logger
@@ -11,6 +13,7 @@ def setup_logger():
     """
     _logger = loguru.logger
     return _logger
+
 
 # 初始化全局 logger
 logger = setup_logger()
