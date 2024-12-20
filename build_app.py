@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 import configparser
 import argparse
+import time
 from datetime import datetime
 from logger import logger
 
@@ -87,13 +88,14 @@ def _build_app_and_run_unity_command():
         '-customBuildName', build_name,
         '-customBuildPath', str(BUILD_PATH.absolute()),
         '-executeMethod', 'BuildCommand.PerformBuild',
-        '-logFile', str(BUILD_LOG_PATH.absolute())
+        # '-logFile', str(BUILD_LOG_PATH.absolute())
+        # '-logFile -'
     ]
 
     logger.info(f"Running Unity with command: {' '.join(unity_cmd)}")
     run_unity_command(unity_cmd)
     # 列出构建路径中的文件
-    logger.info("\nContents of build path:")
+    logger.info("Contents of build path:")
     if BUILD_PATH.exists():
         for item in BUILD_PATH.iterdir():
             logger.info(item)
@@ -111,12 +113,30 @@ def run_unity_command(cmd):
     Args:
         cmd (string[]): 命令行数组
     """
+    start_time = time.time()
     try:
         # 执行 Unity 构建命令
-        result = subprocess.run(
-            cmd, check=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            encoding='utf-8',
+            universal_newlines=True  # 确保输出为文本格式
+        )
 
-        UNITY_EXIT_CODE = result.returncode
+        # 实时读取并打印标准输出和标准错误
+        for line in iter(process.stdout.readline, ''):
+            logger.info(line.strip())
+
+        process.stdout.close()
+        process.wait()
+
+        # 计算运行时间
+        elapsed_time = time.time() - start_time
+        logger.info(f"Command completed in {elapsed_time:.2f} seconds")
+
+        UNITY_EXIT_CODE = process.returncode
 
         # 处理不同的退出码
         if UNITY_EXIT_CODE == 0:
@@ -150,12 +170,13 @@ def build_app(file_path):
 
     Args:
         file_path (string): 配置文件路径
-    """    
+    """
     _read_app_cfg_and_set_env(file_path)
     _build_app_and_run_unity_command()
 
+
 def _main():
-    print(HEADER)
+    logger.info(HEADER)
     parser = argparse.ArgumentParser(description="Unity build tool")
     parser.add_argument('cfg_path', type=str, help='build config ini file')
     args = parser.parse_args()
@@ -164,5 +185,8 @@ def _main():
         return
     build_app(args.cfg_path)
 
+
 if __name__ == "__main__":
+    logger.add("logs/app/build_app_{time}.log",
+               backtrace=True, diagnose=True, enqueue=True)
     _main()

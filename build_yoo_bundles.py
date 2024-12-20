@@ -81,7 +81,7 @@ def _build_bundles_and_run_unity_command():
         '-buildMode', BUILD_MODE,
         '-pkgVersion', PACKAGE_VER,
         '-executeMethod', 'BuildCommand.PerformBuildYooBundles',
-        '-logFile', str(BUILD_LOG_PATH.absolute())
+        # '-logFile', str(BUILD_LOG_PATH.absolute())
     ]
 
     logger.info(f"Running Unity with command: {' '.join(unity_cmd)}")
@@ -89,7 +89,7 @@ def _build_bundles_and_run_unity_command():
 
 
 def _main():
-    print(build_app.HEADER)
+    logger.info(build_app.HEADER)
     parser = argparse.ArgumentParser(description="Unity build tool")
     parser.add_argument('cfg_path', type=str, help='build config ini file')
     args = parser.parse_args()
@@ -101,4 +101,5 @@ def _main():
 
 
 if __name__ == "__main__":
+    logger.add("logs/bundles/build_bundles_{time}.log", backtrace=True, diagnose=True, enqueue=True)
     _main()
