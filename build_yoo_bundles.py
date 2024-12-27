@@ -6,7 +6,8 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 from logger import logger
-import build_app
+import build_tool
+import post_build
 
 
 def build_bundles(file_path):
@@ -15,7 +16,10 @@ def build_bundles(file_path):
     Args:
         file_path (string): bundles配置文件路径
     """
+    build_tool.setup_build_time()
     logger.info(f"Read bundles config:{file_path}")
+    logger.add("logs/bundles/build_bundles_{time}.log",
+               backtrace=True, diagnose=True, enqueue=True)
     cfg = configparser.ConfigParser()
     cfg.read(file_path)
     for section in cfg.sections():
@@ -23,12 +27,14 @@ def build_bundles(file_path):
         os.environ['PACKAGE_NAME'] = section
         _set_pkg_env(cfg[section])
         _build_package()
+    post_build.post_build_bundles_without_pack()
 
 
 def _set_pkg_env(section):
     for key, value in section.items():
-        os.environ[key.upper()] = value
-        logger.info(f"Build Env:{key.upper()} = {value}")
+        v = value.replace("\\", "/")
+        os.environ[key.upper()] = v
+        logger.info(f"Build Env:{key.upper()} = {v}")
 
 
 def _build_package():
@@ -39,11 +45,12 @@ def _build_package():
 
 
 def _build_bundles_and_run_unity_command():
+    logger.info(f"Build bundles and run unity command.")
     required_env_vars = ['UNITY_EXECUTABLE', 'PROJ_DIR', 'BUILD_OUTPUT_ROOT',
                          'BUILD_TARGET', 'BUILD_IN_FILE_COPY', 'BUILD_PKG_VER',
                          'FILE_NAME_STYLE', 'COMPRESSION', 'ENCRYPTION',
                          'BUILD_MODE', 'PACKAGE_NAME']
-    if not build_app.check_environ(required_env_vars):
+    if not build_tool.check_environ(required_env_vars):
         logger.error("check env failed.")
         sys.exit(1)
 
@@ -59,12 +66,12 @@ def _build_bundles_and_run_unity_command():
     BUILD_PATH = OUTPUT_DIR
     BUILD_PATH.mkdir(parents=True, exist_ok=True)
 
-    current_date = datetime.now().strftime('%y-%m-%d-%H%M%S')
-    logfile = f'logs/build_{BUILD_TARGET}_{PACKAGE_NAME}_{current_date}.log'
-    BUILD_LOG_PATH = BUILD_PATH / logfile
-
+    # logfile = f'logs/build_{BUILD_TARGET}_{PACKAGE_NAME}_{_build_time}.log'
+    # BUILD_LOG_PATH = BUILD_PATH / logfile
     PACKAGE_VER = os.environ['BUILD_PKG_VER']
-    PACKAGE_VER = PACKAGE_VER + "-" + current_date
+    BUILD_TIME = os.environ['BUILD_TIME']
+
+    pkg_version = f"{PACKAGE_VER}-{BUILD_TIME}"
 
     # 构建 Unity 命令
     unity_cmd = [
@@ -79,17 +86,19 @@ def _build_bundles_and_run_unity_command():
         '-pkgName', PACKAGE_NAME,
         '-copyOption', COPY_OPTION,
         '-buildMode', BUILD_MODE,
-        '-pkgVersion', PACKAGE_VER,
+        '-pkgVersion', pkg_version,
         '-executeMethod', 'BuildCommand.PerformBuildYooBundles',
         # '-logFile', str(BUILD_LOG_PATH.absolute())
     ]
 
     logger.info(f"Running Unity with command: {' '.join(unity_cmd)}")
-    build_app.run_unity_command(unity_cmd)
+    build_tool.run_unity_command(unity_cmd)
+    post_build.move_bundles_to_pack(
+        BUILD_TARGET, OUTPUT_DIR, PACKAGE_NAME, pkg_version)
 
 
 def _main():
-    logger.info(build_app.HEADER)
+    logger.info(build_tool.HEADER)
     parser = argparse.ArgumentParser(description="Unity build tool")
     parser.add_argument('cfg_path', type=str, help='build config ini file')
     args = parser.parse_args()
@@ -101,5 +110,4 @@ def _main():
 
 
 if __name__ == "__main__":
-    logger.add("logs/bundles/build_bundles_{time}.log", backtrace=True, diagnose=True, enqueue=True)
     _main()
