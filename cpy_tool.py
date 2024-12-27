@@ -35,10 +35,29 @@ def copy_directory_tree_with_info(src, dst):
     except Exception as e:
         print(f"Falied to copy directory: {e}")
 
+def move_directory_tree_with_info(src, dst):
+    """
+    移动整个目录树到目标路径，如果目标路径不存在则创建，并在移动时输出信息。
 
-# 源目录路径和目标目录路径
-source_dir = 'E:\\cwcx\\bundles\\Android\\ResPackage\\1.0.0-24-12-20-191209'
-destination_dir = 'E:\\cwcx\\bundles\\Android\\ResPackage\\latest'
+    :param src: 源目录的路径
+    :param dst: 目标目录的路径
+    """
 
-# 拷贝整个目录树
-copy_directory_tree_with_info(source_dir, destination_dir)
+    if os.path.exists(dst):
+        print(f"Removing existing directory: {dst}")
+        shutil.rmtree(dst)
+        
+    try:
+        shutil.move(src, dst)
+        print(f"Directory moved successfully from {src} to {dst}")
+    except Exception as e:
+        print(f"Falied to move directory: {e}")
+
+
+# # 源目录路径和目标目录路径
+# source_dir = 'E:\\cwcx\\bundles\\Android\\ResPackage\\1.0.0-24-12-20-191209'
+# destination_dir = 'E:\\cwcx\\bundles\\Android\\ResPackage\\latest'
+
+# # 拷贝整个目录树
+# copy_directory_tree_with_info(source_dir, destination_dir)
+
