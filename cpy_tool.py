@@ -114,6 +114,39 @@ def copy_directory_with_progress(src, dst):
     except Exception as e:
         logger.error(f"Failed to copy directory: {e}")
 
+def move_all_files_and_dirs(src: Path, dst: Path):
+    """
+    使用 pathlib 将 src 目录下的所有文件和子目录移动到 dst 目录。
+    
+    :param src: 源目录的路径
+    :param dst: 目标目录的路径
+    """
+    # 确保 src 是一个存在的目录
+    if not src.is_dir():
+        print(f"源目录 {src} 不存在或不是一个目录。")
+        return
+    
+    # 如果目标目录不存在，则创建它
+    dst.mkdir(parents=True, exist_ok=True)
+    
+    # 遍历源目录中的所有文件和子目录（递归）
+    for item in src.rglob('*'):
+        relative_path = item.relative_to(src)  # 获取相对路径
+        target_path = dst / relative_path
+        
+        try:
+            if item.is_file():
+                # 移动文件到目标目录，并保持原有的相对路径结构
+                target_path.parent.mkdir(parents=True, exist_ok=True)  # 创建必要的父目录
+                shutil.move(str(item), str(target_path))
+                print(f"已移动 {item} 到 {target_path}")
+            elif item.is_dir():
+                # 如果是空目录，确保在目标位置创建相应的空目录
+                if not any(item.iterdir()):
+                    target_path.mkdir(parents=True, exist_ok=True)
+                    print(f"已创建空目录 {target_path}")
+        except Exception as e:
+            print(f"处理 {item} 时出错: {e}")
 
 def move_directory_tree_with_info(src, dst):
     """
