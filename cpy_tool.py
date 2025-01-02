@@ -53,9 +53,10 @@ def copy_file_with_progress(src, dst, file_size=None, file_pbar=None):
     try:
         if file_size is None:
             file_size = os.path.getsize(src)
-        
+
         if file_pbar is None:
-            file_pbar = tqdm(total=file_size, unit="B", unit_scale=True, desc=f"Copying {os.path.basename(src)}")
+            file_pbar = tqdm(total=file_size, unit="B", unit_scale=True,
+                             desc=f"Copying {os.path.basename(src)}")
 
         copied = 0
         with open(src, 'rb') as fsrc, open(dst, 'wb') as fdst:
@@ -66,7 +67,7 @@ def copy_file_with_progress(src, dst, file_size=None, file_pbar=None):
                 fdst.write(buf)
                 copied += len(buf)
                 file_pbar.update(len(buf))  # 更新文件级别的进度条
-        
+
         file_pbar.close()
         # print(f"Copied: {src} -> {dst}", end='\r', flush=True)
     except Exception as e:
@@ -81,7 +82,8 @@ def copy_directory_with_progress(src, dst):
     :param dst: 目标目录的路径
     """
     if not os.path.isdir(src):
-        logger.error(f"Source directory {src} does not exist or is not a directory")
+        logger.error(f"Source directory {src}"
+                     "does not exist or is not a directory")
         return
 
     # 如果目标目录已存在，则删除它
@@ -95,7 +97,8 @@ def copy_directory_with_progress(src, dst):
         file_count = sum(1 for item in all_files if item.is_file())
         total_size = sum(os.path.getsize(file)
                          for file in all_files if file.is_file())
-        logger.info(f"Total files to copy: {file_count}, Total size: {total_size / (1024 * 1024):.2f} MB")
+        logger.info(f"Total files to copy: {file_count}, "
+                    f"Total size: {total_size / (1024 * 1024):.2f} MB")
 
         # 创建总体进度条
         with tqdm(total=total_size, unit="B", unit_scale=True, desc="Total Progress") as overall_pbar:
@@ -114,39 +117,51 @@ def copy_directory_with_progress(src, dst):
     except Exception as e:
         logger.error(f"Failed to copy directory: {e}")
 
-def move_all_files_and_dirs(src: Path, dst: Path):
+
+def move_all_files_and_dirs(from_dir, to_dir, overwrite=False):
     """
-    使用 pathlib 将 src 目录下的所有文件和子目录移动到 dst 目录。
-    
-    :param src: 源目录的路径
-    :param dst: 目标目录的路径
+    移动一个目录下的所有子文件和子目录到另一个目录。
+
+    :param from_dir: 源目录路径
+    :param to_dir: 目标目录路径
+    :param overwrite: 如果目标目录中已存在同名文件或目录，是否覆盖（默认为False）
     """
-    # 确保 src 是一个存在的目录
-    if not src.is_dir():
-        print(f"源目录 {src} 不存在或不是一个目录。")
-        return
-    
-    # 如果目标目录不存在，则创建它
-    dst.mkdir(parents=True, exist_ok=True)
-    
-    # 遍历源目录中的所有文件和子目录（递归）
-    for item in src.rglob('*'):
-        relative_path = item.relative_to(src)  # 获取相对路径
-        target_path = dst / relative_path
-        
-        try:
-            if item.is_file():
-                # 移动文件到目标目录，并保持原有的相对路径结构
-                target_path.parent.mkdir(parents=True, exist_ok=True)  # 创建必要的父目录
-                shutil.move(str(item), str(target_path))
-                print(f"已移动 {item} 到 {target_path}")
-            elif item.is_dir():
-                # 如果是空目录，确保在目标位置创建相应的空目录
-                if not any(item.iterdir()):
-                    target_path.mkdir(parents=True, exist_ok=True)
-                    print(f"已创建空目录 {target_path}")
-        except Exception as e:
-            print(f"处理 {item} 时出错: {e}")
+    from_path = Path(from_dir)
+    to_path = Path(to_dir)
+
+    # 确保源目录存在
+    if not from_path.exists():
+        logger.error(f"源目录 '{from_dir}' 不存在")
+
+    # 确保目标目录存在，如果不存在则创建
+    to_path.mkdir(parents=True, exist_ok=True)
+
+    # 遍历源目录中的所有文件和子目录
+    for item in from_path.iterdir():
+        to_item = to_path / item.name
+
+        # 如果目标路径已存在且是一个目录
+        if to_item.exists() and to_item.is_dir() and item.is_dir():
+            # 递归移动源子目录中的内容到目标子目录
+            move_all_files_and_dirs(item, to_item, overwrite)
+        else:
+            # 如果目标路径已存在且不是目录
+            if to_item.exists():
+                if overwrite:
+                    # 如果选择覆盖，则删除目标路径
+                    if to_item.is_file() or to_item.is_symlink():
+                        to_item.unlink()
+                    else:
+                        shutil.rmtree(to_item)
+                else:
+                    # 如果选择不覆盖，则跳过
+                    logger.warning(f"跳过 '{to_item}'，因为目标路径已存在")
+                    continue
+
+            # 移动文件或目录
+            shutil.move(str(item), str(to_item))
+            logger.info(f"移动 '{item}' 到 '{to_item}'")
+
 
 def move_directory_tree_with_info(src, dst):
     """
