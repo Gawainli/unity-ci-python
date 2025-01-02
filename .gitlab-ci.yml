@@ -39,7 +39,7 @@ test-env:
   script:
     - echo $PATH
     - echo $UNITY_2020
-    - set $UNITY_EXECUTABLE=%UNITY_2020%
+    - set UNITY_EXECUTABLE=%UNITY_2020%
     - echo $UNITY_EXECUTABLE
   tags:
     - unity
