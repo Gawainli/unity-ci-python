@@ -24,10 +24,11 @@ stages:          # List of stages for jobs, and their order of execution
 build-bundles-ch:
   stage: build
   script:
+    - zsh
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
     - python --version
-    - python3.10 --version
+    - python3 --version
   tags:
     - unity
     - mac
