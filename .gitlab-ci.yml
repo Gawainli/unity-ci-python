@@ -25,8 +25,8 @@ build-bundles-ch:
   stage: build
   script:
     - cd /Users/feimo/cwcx/unity-ci
+    - pwd
     - source env_macos_unity_ci/bin/active
-    - py build_yoo_buildes.py cfg/cwcx_bundles_mac.ini
   tags:
     - unity
     - mac
