@@ -21,10 +21,17 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
+build-android-ch:
+  stage: build
+  script:
+    - export UNITY_EXECUTABLE="${UNITY_2020}"
+    - cd /Users/feimo/cwcx/unity-ci
+    - source ./env_macos_unity_ci/bin/activate
+    - /opt/homebrew/bin/python3.10 build_app.py cfg/cwcx_android.ini
+
 build-bundles-ch:
   stage: build
   script:
-    - source /Users/feimo/.bash_profile
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
     - /opt/homebrew/bin/python3.10 build_yoo_bundles.py cfg/cwcx_bundles_mac.ini
