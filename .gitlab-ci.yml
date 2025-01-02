@@ -21,21 +21,12 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - deploy
 
-build-job:       # This job runs in the build stage, which runs first.
+build-bundles-ch:
   stage: build
   script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-  tags:
-    - unity
-    - mac
-    - cwcx
-  when: manual
-
-build-all-bundles:
-  stage: build
-  script:
-    - echo "Compiling bundles..."
+    - cd /Users/feimo/cwcx/unity-ci
+    - source env_macos_unity_ci/bin/active
+    - py build_yoo_buildes.py cfg/cwcx_bundles_mac.ini
   tags:
     - unity
     - mac
