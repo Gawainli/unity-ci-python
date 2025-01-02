@@ -27,8 +27,7 @@ build-bundles-ch:
     - source /Users/feimo/.bash_profile
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
-    - python --version
-    - echo $PATH
+    - /opt/homebrew/bin/python3.10 --version
   tags:
     - unity
     - mac
