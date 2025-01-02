@@ -67,7 +67,7 @@ def _build_app_and_run_unity_command():
         '-buildTarget', BUILD_TARGET,
         '-customBuildTarget', BUILD_TARGET,
         '-customBuildName', build_name,
-        '-customBuildPath', str(BUILD_PATH.absolute()),
+        '-customBuildPath', str(BUILD_PATH),
         '-executeMethod', 'BuildCommand.PerformBuild',
         # '-logFile', str(BUILD_LOG_PATH.absolute())
         # '-logFile -'
