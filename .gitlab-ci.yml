@@ -26,7 +26,6 @@ build-bundles-ch:
   script:
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
-    - py --version
     - python --version
     - python3 --version
   tags:
