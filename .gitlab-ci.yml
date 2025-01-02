@@ -24,7 +24,10 @@ stages:          # List of stages for jobs, and their order of execution
 build-android-ch:
   stage: build
   script:
+    - echo $PATH
+    - echo $UNITY_2020
     - export UNITY_EXECUTABLE="${UNITY_2020}"
+    - echo UNITY_EXECUTABLE
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
     - /opt/homebrew/bin/python3.10 build_app.py cfg/cwcx_android.ini
