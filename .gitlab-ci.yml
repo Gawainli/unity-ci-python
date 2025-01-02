@@ -33,3 +33,14 @@ build-bundles-ch:
     - mac
     - cwcx
   when: manual
+
+test-env:
+  stage: build
+  script:
+    - echo $PATH
+    - echo $UNITY_2020
+  tags:
+    - unity
+    - mac
+    - cwcx
+  when: manual
