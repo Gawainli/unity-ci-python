@@ -24,7 +24,7 @@ stages:          # List of stages for jobs, and their order of execution
 build-bundles-ch:
   stage: build
   script:
-    - pwd
+    - source /Users/feimo/.bash_profile
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
     - python --version
