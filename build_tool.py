@@ -54,6 +54,7 @@ def run_unity_command(cmd):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
+            shell=True,
             encoding='utf-8',
             universal_newlines=True  # 确保输出为文本格式
         )

@@ -50,7 +50,7 @@ def _build_app_and_run_unity_command():
 
     logger.info(f"Building for {BUILD_TARGET}")
 
-    BUILD_PATH = PROJ_DIR / 'Builds' / BUILD_TARGET
+    BUILD_PATH = Path(os.environ['BUILD_OUTPUT_ROOT']) / 'Builds' / BUILD_TARGET
     BUILD_PATH.mkdir(parents=True, exist_ok=True)
 
     current_date = datetime.now().strftime('%m-%d-%H-%M')
@@ -73,8 +73,9 @@ def _build_app_and_run_unity_command():
         # '-logFile -'
     ]
 
-    logger.info(f"Running Unity with command: {' '.join(unity_cmd)}")
-    build_tool.run_unity_command(unity_cmd)
+    cmd_str = ' '.join(unity_cmd)
+    logger.info(f"Running Unity with command: {cmd_str}")
+    build_tool.run_unity_command(cmd_str)
     # 列出构建路径中的文件
     logger.info("Contents of build path:")
     if BUILD_PATH.exists():

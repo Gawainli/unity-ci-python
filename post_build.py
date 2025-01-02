@@ -4,7 +4,7 @@ from datetime import datetime
 import os
 import cpy_tool
 
-DST_PATH_ROOT = "X:/ch_auto"
+DST_PATH_ROOT = "/Volumes/cwcx/ch_auto"
 
 
 def bak_old_bundles():
@@ -30,9 +30,9 @@ def move_bundles_to_pack(build_target: str, bundles_root_path: str, pkg_name: st
         dst_path = Path(
             f"{bundles_root_path}/pack/{version}/{build_target.lower()}/bundles")
         dst_path.mkdir(parents=True, exist_ok=True)
-        cpy_tool.move_directory_tree_with_info(cpy_src_path, dst_path)
+        cpy_tool.move_all_files_and_dirs(cpy_src_path, dst_path)
     else:
-        logger.warning(f"Path {cpy_src_path} does not exist.")
+        logger.warning(f"Error. Path {cpy_src_path} does not exist.")
 
 
 def post_build_bundles():

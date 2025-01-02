@@ -82,7 +82,7 @@ def _build_bundles_and_run_unity_command():
         '-nographics',
         '-buildTarget', BUILD_TARGET,
         '-customBuildTarget', BUILD_TARGET,
-        '-customBuildPath', str(BUILD_PATH.absolute()),
+        '-customBuildPath', str(BUILD_PATH),
         '-pkgName', PACKAGE_NAME,
         '-copyOption', COPY_OPTION,
         '-buildMode', BUILD_MODE,
@@ -91,8 +91,9 @@ def _build_bundles_and_run_unity_command():
         # '-logFile', str(BUILD_LOG_PATH.absolute())
     ]
 
-    logger.info(f"Running Unity with command: {' '.join(unity_cmd)}")
-    build_tool.run_unity_command(unity_cmd)
+    cmd_str = ' '.join(unity_cmd)
+    logger.info(f"Running Unity with command: {cmd_str}")
+    build_tool.run_unity_command(cmd_str)
     post_build.move_bundles_to_pack(
         BUILD_TARGET, OUTPUT_DIR, PACKAGE_NAME, pkg_version)
 
