@@ -28,6 +28,11 @@ build-android-ch:
     - cd /Users/feimo/cwcx/unity-ci
     - source ./env_macos_unity_ci/bin/activate
     - /opt/homebrew/bin/python3.10 build_app.py cfg/cwcx_android.ini
+  when: manual
+  tags:
+    - unity
+    - mac
+    - cwcx
 
 build-bundles-ch:
   stage: build
