@@ -17,10 +17,7 @@ def test_subprocess():
 
 
 def test_copy_files():
-    cpy_tool.move_all_files_and_dirs(
-        "E:/cwcx/250/ch_auto/android", "E:/cwcx/250/ch_auto/test_copy")
-    cpy_tool.move_all_files_and_dirs(
-        "E:/cwcx/250/ch_auto/ios", "E:/cwcx/250/ch_auto/test_copy")
+    cpy_tool.copy_director_with_info(r'E:\cwcx\bundles\Android\DefaultPackage\1.0.0-24-12-30-155419', r'E:\cwcx\bundles\test_copy')
 
 
 if __name__ == "__main__":

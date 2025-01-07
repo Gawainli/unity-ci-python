@@ -15,6 +15,7 @@ HEADER = r"""
   \___|  \_/\_/    \___|/_/\_\  |___/ \_,_| |_||_|\__,_| 
 """
 
+
 def setup_build_time():
     """
     Sets up the build time environment variable.
@@ -22,31 +23,12 @@ def setup_build_time():
     This function sets the '_build_time' environment variable to the current time
     formatted as 'yy-mm-dd-HHMMSS'.
     """
-    os.environ['BUILD_TIME'] = time.strftime('%y-%m-%d-%H%M%S')
-
-
-def check_environ(env_vars):
-    """检查需要用到环境变量有没有被正确设置
-
-    Args:
-        env_vars (string[]): 环境变量名数组 
-
-    Returns:
-        bool: 都正确设置返回true否则返回false
-    """
-    for var in env_vars:
-        if var not in os.environ:
-            logger.error(f"Error: Environment variable {var} is not set.")
-            return False
-    return True
+    os.environ["BUILD_TIME"] = time.strftime("%y-%m-%d-%H%M%S")
 
 
 def run_unity_command(cmd):
-    """运行unity命令行
-    Args:
-        cmd (string[]): 命令行数组
-    """
     start_time = time.time()
+    logger.info(f"Running command: {cmd}")
     try:
         # 执行 Unity 构建命令
         process = subprocess.Popen(
@@ -54,13 +36,13 @@ def run_unity_command(cmd):
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            shell=True,
-            encoding='utf-8',
-            universal_newlines=True  # 确保输出为文本格式
+            # shell=True,
+            # encoding="cp936",
+            universal_newlines=True,  # 确保输出为文本格式
         )
 
         # 实时读取并打印标准输出和标准错误
-        for line in iter(process.stdout.readline, ''):
+        for line in iter(process.stdout.readline, ""):
             logger.info(line.strip())
 
         process.stdout.close()
@@ -75,12 +57,9 @@ def run_unity_command(cmd):
         # 处理不同的退出码
         if UNITY_EXIT_CODE == 0:
             logger.info("Run succeeded, no failures occurred")
-        elif UNITY_EXIT_CODE == 2:
-            logger.error("Run succeeded, some tests failed")
-        elif UNITY_EXIT_CODE == 3:
-            logger.error("Run failure (other failure)")
         else:
             logger.error(f"Unexpected exit code {UNITY_EXIT_CODE}")
+            sys.exit(1)
 
     except Exception as e:
         logger.error(f"An error occurred: {e}")
