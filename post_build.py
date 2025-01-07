@@ -15,8 +15,10 @@ def _bak_old_bundles():
 
     src_path = Path(os.environ["BUNDLE_COPY_TO"])
     if src_path.exists():
-        cpy_tool.move_directory_tree_with_info(src_path/"android", bak_path/"android")
-        cpy_tool.move_directory_tree_with_info(src_path/"ios", bak_path/"ios")
+        cpy_tool.move_directory_tree_with_info(
+            src_path / "cdn/android", bak_path / "android"
+        )
+        cpy_tool.move_directory_tree_with_info(src_path / "cdn/ios", bak_path / "ios")
     else:
         logger.warning(f"Path {src_path} does not exist.")
 
@@ -38,7 +40,12 @@ def _move_bundles(package_names: str, bundle_version: str, build_target: str) ->
             / package_name
             / bundle_version
         )
-        to_path = Path(os.environ["BUNDLE_COPY_TO"]) / build_target.lower() / "bundles"
+        to_path = (
+            Path(os.environ["BUNDLE_COPY_TO"])
+            / "cdn"
+            / build_target.lower()
+            / "bundles"
+        )
         logger.info(f"move from {from_path} to {to_path}")
         cpy_tool.copy_director_with_info(from_path, to_path, True)
 
