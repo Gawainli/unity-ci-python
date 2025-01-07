@@ -20,7 +20,6 @@ def _build_one_package(package_name: str):
     required_env_vars = [
         "UNITY_EXECUTABLE",
         "PROJ_DIR",
-        "BUNDLE_OUTPUT",
         "BUILD_TARGET",
         "BUILD_IN_FILE_COPY",
         "FILE_NAME_STYLE",
@@ -41,7 +40,7 @@ def _build_bundles_and_run_unity_command():
 
     BUILD_TARGET = os.environ["BUILD_TARGET"]
     PROJ_DIR = Path(os.environ["PROJ_DIR"])
-    OUTPUT_DIR = Path(os.environ["BUNDLE_OUTPUT"])
+    OUTPUT_DIR = Path(os.environ["BUILD_OUTPUT"])
     UNITY_EXECUTABLE = os.environ.get(
         "UNITY_EXECUTABLE",
         'xvfb-run --auto-servernum --server-args="-screen 0 640x480x24" unity-editor',
@@ -50,7 +49,7 @@ def _build_bundles_and_run_unity_command():
     COPY_OPTION = os.environ["BUILD_IN_FILE_COPY"]
     BUILD_MODE = os.environ["BUILD_MODE"]
 
-    BUILD_PATH = OUTPUT_DIR
+    BUILD_PATH = OUTPUT_DIR / "bundles"
     BUILD_PATH.mkdir(parents=True, exist_ok=True)
 
     # logfile = f'logs/build_{BUILD_TARGET}_{PACKAGE_NAME}_{_build_time}.log'

@@ -32,7 +32,8 @@ def post_build_bundles():
 def _move_bundles(package_names: str, bundle_version: str, build_target: str) -> None:
     for package_name in package_names:
         from_path = (
-            Path(os.environ["BUNDLE_OUTPUT"])
+            Path(os.environ["BUILD_OUTPUT"])
+            / "bundles"
             / build_target
             / package_name
             / bundle_version

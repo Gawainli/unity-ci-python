@@ -20,7 +20,7 @@ def _build_app_and_run_unity_command():
 
     logger.info(f"Building for {BUILD_TARGET}")
 
-    BUILD_PATH = Path(os.environ["APP_OUTPUT"]) / BUILD_TARGET
+    BUILD_PATH = Path(os.environ["BUILD_OUTPUT"]) / "build" / BUILD_TARGET
     BUILD_PATH.mkdir(parents=True, exist_ok=True)
     BUILD_TIME = os.environ["BUILD_TIME"]
 
@@ -75,7 +75,7 @@ def build_app():
     required_env_vars = [
         "BUILD_TARGET",
         "PROJ_DIR",
-        "APP_OUTPUT",
+        "BUILD_OUTPUT",
         "UNITY_EXECUTABLE",
         "BUILD_NAME",
         "BUILD_TIME",
@@ -99,5 +99,4 @@ def _main():
 
 
 if __name__ == "__main__":
-
     _main()
