@@ -3,6 +3,7 @@ import subprocess
 import time
 import sys
 from logger import logger
+import platform
 
 HEADER = r"""
                             )                             
@@ -30,13 +31,14 @@ def run_unity_command(cmd):
     start_time = time.time()
     logger.info(f"Running command: {cmd}")
     try:
+        use_shell = platform.system() != "Windows"
         # 执行 Unity 构建命令
         process = subprocess.Popen(
             cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             text=True,
-            # shell=True,
+            shell=use_shell,
             # encoding="cp936",
             universal_newlines=True,  # 确保输出为文本格式
         )
