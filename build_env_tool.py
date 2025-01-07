@@ -2,6 +2,7 @@ from logger import logger
 import configparser
 import os
 import argparse
+import sys
 from datetime import datetime
 
 ci_config = configparser.ConfigParser()
@@ -49,7 +50,7 @@ def set_build_env(config_path: str):
 
 
 def set_package_env(package_name: str):
-    os.environ['PACKAGE_NAME'] = package_name
+    os.environ["PACKAGE_NAME"] = package_name
     if not build_config.has_section(package_name):
         logger.error(f"Package section not found: {package_name}")
         return
@@ -62,8 +63,17 @@ def load_config_from_args():
     parser.add_argument("-ci", "--ci_config", type=str)
     parser.add_argument("-build", "--build_config", type=str)
     args = parser.parse_args()
-    set_ci_env(args.ci_config)
-    set_build_env(args.build_config)
+
+    if args.ci_config is None:
+        logger.warning("ci_config is None. use system env")
+    else:
+        set_ci_env(args.ci_config)
+
+    if args.build_config is None:
+        logger.error("build_config is None. exit")
+        sys.exit(1)
+    else:
+        set_build_env(args.build_config)
 
 
 def check_environ(env_vars):
