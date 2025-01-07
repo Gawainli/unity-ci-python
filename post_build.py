@@ -15,7 +15,8 @@ def _bak_old_bundles():
 
     src_path = Path(os.environ["BUNDLE_COPY_TO"])
     if src_path.exists():
-        cpy_tool.move_directory_tree_with_info(src_path, bak_path)
+        cpy_tool.move_directory_tree_with_info(src_path/"android", bak_path/"android")
+        cpy_tool.move_directory_tree_with_info(src_path/"ios", bak_path/"ios")
     else:
         logger.warning(f"Path {src_path} does not exist.")
 
@@ -46,4 +47,4 @@ if __name__ == "__main__":
 
     build_env_tool.set_ci_env("cfg/ci_env.ini")
     _bak_old_bundles()
-    _move_bundles(["DefaultPackage", "RawPackage"], "1.0.0-25-01-06-224641", "Android")
+    # _move_bundles(["DefaultPackage", "RawPackage"], "1.0.0-25-01-06-224641", "Android")

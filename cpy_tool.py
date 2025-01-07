@@ -62,9 +62,12 @@ def move_directory_tree_with_info(from_path, to_path):
     :param src: 源目录的路径
     :param dst: 目标目录的路径
     """
+    if not os.path.exists(from_path):
+        logger.error(f"Source directory does not exist: {from_path}")
+        return
 
     if os.path.exists(to_path):
-        logger.info(f"Removing existing directory: {to_path}")
+        logger.warning(f"Removing existing directory: {to_path}")
         shutil.rmtree(to_path)
 
     try:
