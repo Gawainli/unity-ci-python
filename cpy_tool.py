@@ -3,6 +3,34 @@ import os
 from pathlib import Path
 from logger import logger
 
+def copy_file_to(from_path, to_path):
+    """
+    将文件从 from_path 拷贝到 to_path。
+
+    参数:
+    from_path (str): 源文件的路径。
+    to_path (str): 目标文件的路径或目标目录。
+
+    返回:
+    str: 拷贝后的目标文件路径。
+    """
+    try:
+        # 检查源文件是否存在
+        if not os.path.exists(from_path):
+            logger.error(f"源文件 {from_path} 不存在")
+
+        # 如果 to_path 是目录，则将文件拷贝到该目录中
+        if os.path.isdir(to_path):
+            to_path = os.path.join(to_path, os.path.basename(from_path))
+
+        # 执行文件拷贝
+        shutil.copy(from_path, to_path)
+        print(f"文件已从 {from_path} 拷贝到 {to_path}")
+
+    except Exception as e:
+        print(f"拷贝文件时出错: {e}")
+        return
+
 
 def copy_director_with_info(src, dst, overwrite=False):
     """

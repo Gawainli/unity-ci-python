@@ -6,6 +6,7 @@ from pathlib import Path
 from logger import logger
 import build_tool
 import build_env_tool
+import post_build
 
 
 def _build_app_and_run_unity_command():
@@ -25,6 +26,7 @@ def _build_app_and_run_unity_command():
     BUILD_TIME = os.environ["BUILD_TIME"]
 
     build_name = f"{BUILD_NAME}_{BUILD_TIME}"
+    os.environ["APK_PATH"] = BUILD_PATH/f"{build_name}.apk"
 
     # 构建 Unity 命令
     unity_cmd = [
@@ -96,6 +98,7 @@ def _main():
     )
     build_env_tool.load_config_from_args()
     build_app()
+    post_build.post_build_app()
 
 
 if __name__ == "__main__":
