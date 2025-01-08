@@ -26,7 +26,7 @@ def _build_app_and_run_unity_command():
     BUILD_TIME = os.environ["BUILD_TIME"]
 
     build_name = f"{BUILD_NAME}_{BUILD_TIME}"
-    os.environ["APK_PATH"] = BUILD_PATH/f"{build_name}.apk"
+    os.environ["APK_PATH"] = str(BUILD_PATH / f"{build_name}.apk")
 
     # 构建 Unity 命令
     unity_cmd = [
