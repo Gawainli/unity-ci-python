@@ -92,15 +92,23 @@ def _build_bundles_and_run_unity_command():
     # post_build.move_bundles_to_pack(BUILD_TARGET, OUTPUT_DIR, PACKAGE_NAME, pkg_version)
 
 
+def _get_log_path() -> str:
+    return (
+        os.environ.get("BUILD_OUTPUT", "logs")
+        + "/logs_build_bundles/"
+        + f"bundles-{os.environ['BUILD_TIME']}.log"
+    )
+
+
 def _main():
-    logger.info(build_tool.HEADER)
     build_tool.setup_build_time()
     logger.add(
-        f"logs/bundles/build-bundles-{os.environ['BUILD_TIME']}.log",
+        _get_log_path(),
         backtrace=True,
         diagnose=True,
         enqueue=True,
     )
+    logger.info(build_tool.HEADER)
     build_env_tool.load_config_from_args()
     build_bundles()
     post_build.post_build_bundles()

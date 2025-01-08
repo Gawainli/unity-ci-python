@@ -87,15 +87,23 @@ def build_app():
     _build_app_and_run_unity_command()
 
 
+def _get_log_path() -> str:
+    return (
+        os.environ.get("BUILD_OUTPUT", "logs")
+        + "/logs_build_app/"
+        + f"app-{os.environ['BUILD_TIME']}.log"
+    )
+
+
 def _main():
-    logger.info(build_tool.HEADER)
     build_tool.setup_build_time()
     logger.add(
-        f"logs/app/build-app-{os.environ['BUILD_TIME']}.log",
+        _get_log_path(),
         backtrace=True,
         diagnose=True,
         enqueue=True,
     )
+    logger.info(build_tool.HEADER)
     build_env_tool.load_config_from_args()
     build_app()
     post_build.post_build_app()
