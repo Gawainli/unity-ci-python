@@ -10,7 +10,7 @@ def _bak_old_bundles(build_target:str):
     logger.info("Bak old bundles.")
     bak_time = datetime.now().strftime("%y-%m-%d-%H%M%S")
 
-    bak_path = Path(os.environ["BUNDLE_COPY_TO"]).parent / "bak" / f"{build_target.lower()}"/ f"{bak_time}"
+    bak_path = Path(os.environ["BUNDLE_COPY_TO"]) / "bak" / f"{build_target.lower()}"/ f"{bak_time}"
     bak_path.mkdir(parents=True, exist_ok=True)
 
     src_path = Path(os.environ["BUNDLE_COPY_TO"])
