@@ -16,6 +16,10 @@ def _set_env_if_not_exist(key: str, value: str):
         os.environ[key] = value
         logger.info(f"env set by local: {key}={value}")
 
+def _set_env(key:str, value:str):
+    os.environ[key] = value
+    logger.info(f"env set: {key}={value}")
+
 
 def _set_app_env(config):
     for key, value in config["App"].items():
@@ -55,7 +59,7 @@ def set_package_env(package_name: str):
         logger.error(f"Package section not found: {package_name}")
         return
     for key, value in build_config[package_name].items():
-        _set_env_if_not_exist(key.upper(), value)
+        _set_env(key.upper(), value)
 
 
 def load_config_from_args():
