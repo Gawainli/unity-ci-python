@@ -26,6 +26,12 @@ def _build_app_and_run_unity_command():
     BUILD_TIME = os.environ["BUILD_TIME"]
 
     build_name = f"{BUILD_NAME}_{BUILD_TIME}"
+
+    build_options = os.environ["BuildOptions"]
+    # 如果build_options中包含Development，那么就在build_name后面加上_Dev
+    if "Development" in build_options:
+        build_name += "_dev"
+
     os.environ["APK_PATH"] = str(BUILD_PATH / f"{build_name}.apk")
 
     # 构建 Unity 命令
