@@ -27,7 +27,8 @@ def _build_app_and_run_unity_command():
 
     build_name = f"{BUILD_NAME}_{BUILD_TIME}"
 
-    build_options = os.environ["BuildOptions"]
+    # build_options = os.environ["BuildOptions"]
+    build_options = os.environ.get("BuildOptions", "")
     # 如果build_options中包含Development，那么就在build_name后面加上_Dev
     if "Development" in build_options:
         build_name += "_dev"
