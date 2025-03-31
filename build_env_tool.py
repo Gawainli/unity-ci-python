@@ -69,14 +69,16 @@ def load_config_from_args():
     args = parser.parse_args()
 
     if args.ci_config is None:
-        logger.warning("ci_config is None. use system env")
+        logger.warning("ci_config is None.")
     else:
+        logger.info(f"ci_config: {args.ci_config}")
         set_ci_env(args.ci_config)
 
     if args.build_config is None:
         logger.error("build_config is None. exit")
         sys.exit(1)
     else:
+        logger.info(f"build_config: {args.build_config}")
         set_build_env(args.build_config)
 
 
